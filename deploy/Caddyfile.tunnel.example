@@ -1,0 +1,22 @@
+{
+    admin off
+    auto_https off
+}
+
+# Dedicated loopback-only ingress for a Cloudflare Tunnel on this VM.
+# Do not publish this port, or trust CF-Connecting-IP on a public listener.
+http://:8798 {
+    bind 127.0.0.1
+    request_body {
+        max_size 8KB
+    }
+    handle /v1/ranks/lookup {
+        reverse_proxy 127.0.0.1:8797 {
+            # Cloudflare sets this header. Discard incoming X-Forwarded-For.
+            header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+        }
+    }
+    handle {
+        respond 404
+    }
+}

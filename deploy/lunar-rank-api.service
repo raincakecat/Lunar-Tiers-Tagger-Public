@@ -1,0 +1,23 @@
+[Unit]
+Description=Lunar Tiers read-only rank API
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/lunar-tiers-tagger
+Environment=RANK_API_CONFIG=%h/lunar-tiers-tagger/api/config.local.json
+ExecStart=%h/.local/share/tierlist-runtime/node-v24.18.0-linux-x64/bin/node api/main.mjs
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+UMask=0077
+MemoryMax=384M
+CPUQuota=50%
+
+[Install]
+WantedBy=default.target

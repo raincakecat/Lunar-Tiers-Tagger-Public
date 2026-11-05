@@ -1,0 +1,7 @@
+* text=auto
+gradlew text eol=lf
+*.mjs text eol=lf
+*.sh text eol=lf
+*.service text eol=lf
+*.png binary
+*.jar binary

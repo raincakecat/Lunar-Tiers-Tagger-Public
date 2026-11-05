@@ -1,0 +1,22 @@
+plugins { id 'java-library' }
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
+dependencies {
+    implementation 'com.google.code.gson:gson:2.13.2'
+    testImplementation platform('org.junit:junit-bom:5.13.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+test { useJUnitPlatform() }
+def certificate = layout.buildDirectory.file('test-keystore.p12')
+tasks.register('testCertificate', Exec) {
+    outputs.file(certificate)
+    doFirst {
+        certificate.get().asFile.parentFile.mkdirs()
+        def launcher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }.get()
+        commandLine launcher.metadata.installationPath.file('bin/keytool').asFile.absolutePath,
+            '-genkeypair', '-alias', 'localhost', '-keyalg', 'RSA', '-keysize', '2048', '-validity', '3650',
+            '-ext', 'SAN=dns:localhost,ip:127.0.0.1', '-storetype', 'PKCS12', '-keystore', certificate.get().asFile.absolutePath,
+            '-storepass', 'test-only-local', '-dname', 'CN=localhost', '-noprompt'
+    }
+}
+test { dependsOn 'testCertificate'; systemProperty 'lunar.testKeystore', certificate.get().asFile.absolutePath }

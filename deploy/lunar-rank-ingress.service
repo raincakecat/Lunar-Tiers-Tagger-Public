@@ -1,0 +1,21 @@
+[Unit]
+Description=Lunar Tiers loopback rank ingress
+After=network.target lunar-rank-api.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/caddy run --config %h/lunar-tiers-tagger/deploy/Caddyfile.tunnel.example --adapter caddyfile
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+UMask=0077
+MemoryMax=128M
+CPUQuota=25%
+
+[Install]
+WantedBy=default.target

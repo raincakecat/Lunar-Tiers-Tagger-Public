@@ -1,0 +1,9 @@
+{
+  "database": "/path/to/bot/data/lunar.sqlite",
+  "rootGuildId": "PRIMARY_GUILD_ID",
+  "trustProxy": false,
+  "sources": [
+    {"guildId": "PRIMARY_GUILD_ID", "modes": ["crystal"]},
+    {"guildId": "SECOND_GUILD_ID", "modes": ["sword", "axe", "smp", "pot", "mace", "uhc", "nethpot", "spear-mace"]}
+  ]
+}

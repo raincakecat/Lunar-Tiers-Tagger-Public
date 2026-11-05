@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "lunartiers_tagger",
+  "version": "${version}",
+  "name": "Lunar Tiers Tagger",
+  "description": "Lunar ranks on player nametags and the Tab list across nine game modes.",
+  "authors": ["raincakecat"],
+  "license": "LicenseRef-All-Rights-Reserved",
+  "environment": "client",
+  "entrypoints": {"client": ["dev.lunartiers.tagger.LunarTagger"]},
+  "mixins": ["lunartiers.mixins.json"],
+  "depends": {"fabricloader": ">=${loaderVersion}", "fabric-api": "*", "minecraft": "${minecraftVersion}", "java": ">=${javaVersion}"}
+}

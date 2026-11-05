@@ -1,0 +1,85 @@
+{
+  "providers": [
+    {
+      "chars": [
+        ""
+      ],
+      "type": "bitmap",
+      "ascent": 8,
+      "height": 9,
+      "file": "lunartiers:modes/crystal.png"
+    },
+    {
+      "chars": [
+        ""
+      ],
+      "type": "bitmap",
+      "ascent": 8,
+      "height": 9,
+      "file": "lunartiers:modes/sword.png"
+    },
+    {
+      "chars": [
+        ""
+      ],
+      "type": "bitmap",
+      "ascent": 8,
+      "height": 9,
+      "file": "lunartiers:modes/axe.png"
+    },
+    {
+      "chars": [
+        ""
+      ],
+      "type": "bitmap",
+      "ascent": 8,
+      "height": 9,
+      "file": "lunartiers:modes/smp.png"
+    },
+    {
+      "chars": [
+        ""
+      ],
+      "type": "bitmap",
+      "ascent": 8,
+      "height": 9,
+      "file": "lunartiers:modes/pot.png"
+    },
+    {
+      "chars": [
+        ""
+      ],
+      "type": "bitmap",
+      "ascent": 8,
+      "height": 9,
+      "file": "lunartiers:modes/mace.png"
+    },
+    {
+      "chars": [
+        ""
+      ],
+      "type": "bitmap",
+      "ascent": 8,
+      "height": 9,
+      "file": "lunartiers:modes/uhc.png"
+    },
+    {
+      "chars": [
+        ""
+      ],
+      "type": "bitmap",
+      "ascent": 8,
+      "height": 9,
+      "file": "lunartiers:modes/nethpot.png"
+    },
+    {
+      "chars": [
+        ""
+      ],
+      "type": "bitmap",
+      "ascent": 8,
+      "height": 9,
+      "file": "lunartiers:modes/spear-mace.png"
+    }
+  ]
+}

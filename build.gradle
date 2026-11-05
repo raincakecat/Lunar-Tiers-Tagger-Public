@@ -1,0 +1,15 @@
+plugins {
+    id 'base'
+}
+allprojects {
+    group = 'dev.lunartiers'
+    version = rootProject.mod_version
+    repositories { mavenCentral() }
+}
+tasks.register('releaseJars', Copy) {
+    dependsOn ':mc12111:build', ':mc262:build', ':mc263:build'
+    from project(':mc12111').layout.buildDirectory.dir('libs'), project(':mc262').layout.buildDirectory.dir('libs'), project(':mc263').layout.buildDirectory.dir('libs')
+    include '*.jar'
+    exclude '*-sources.jar', '*-dev.jar'
+    into layout.buildDirectory.dir('release')
+}

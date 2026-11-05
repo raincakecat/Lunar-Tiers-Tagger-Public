@@ -1,0 +1,86 @@
+name: Verify Lunar Tiers Tagger
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      full_game_tests:
+        description: Run full world tests instead of headless UI smoke tests
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.18.0'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: |
+            21
+            25
+      - uses: gradle/actions/setup-gradle@v4
+      - run: npm test
+      - name: Build and unit test
+        shell: bash
+        run: bash ./gradlew :common:test releaseJars --console plain
+      - run: node scripts/verify-jars.mjs
+      - run: npm run load-test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: candidate-${{ matrix.os }}
+          path: |
+            build/release/*.jar
+            build/load-results.json
+            common/build/test-results/test/*.xml
+  client:
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [mc12111, mc262, mc263]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: |
+            21
+            25
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Install software graphics runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libegl-mesa0 libgl1-mesa-dri libglx-mesa0 mesa-vulkan-drivers libflite1
+      - name: Client startup and settings tests
+        run: xvfb-run -a -s '-screen 0 1280x720x24' bash ./gradlew :${{ matrix.module }}:runClientGameTest -PclientSmoke="$SMOKE_ONLY" --console plain
+        env:
+          SMOKE_ONLY: ${{ !(github.event_name == 'workflow_dispatch' && inputs.full_game_tests) }}
+          LIBGL_ALWAYS_SOFTWARE: 'true'
+          SDL_VIDEO_DRIVER: 'x11'
+          SDL_VIDEO_FORCE_EGL: '1'
+          LP_NUM_THREADS: '2'
+          ALSOFT_DRIVERS: 'null'
+          JAVA_TOOL_OPTIONS: '-XX:ActiveProcessorCount=2'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: client-${{ matrix.module }}
+          path: |
+            ${{ matrix.module }}/build/run/clientGameTest/screenshots/*.png
+            ${{ matrix.module }}/build/run/clientGameTest/logs/latest.log

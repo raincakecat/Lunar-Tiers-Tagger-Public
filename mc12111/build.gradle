@@ -1,0 +1,5 @@
+plugins { id 'fabric-loom' version '1.14.10' }
+ext.minecraftVersion = '1.21.11'
+ext.apiVersion = '0.141.6+1.21.11'
+ext.javaVersion = 21
+apply from: rootProject.file('gradle/minecraft.gradle')

@@ -1,0 +1,45 @@
+def targetJava = project.ext.javaVersion as int
+base { archivesName = "lunar-tiers-tagger-${minecraftVersion}" }
+java { toolchain { languageVersion = JavaLanguageVersion.of(targetJava) }; withSourcesJar() }
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraftVersion}"
+    if (javaVersion == 21) mappings loom.officialMojangMappings()
+    if (javaVersion == 21) {
+        modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+        modImplementation "net.fabricmc.fabric-api:fabric-api:${apiVersion}"
+    } else {
+        implementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+        implementation "net.fabricmc.fabric-api:fabric-api:${apiVersion}"
+    }
+}
+sourceSets.main.java.srcDirs += [rootProject.file('common/src/main/java'), rootProject.file('client/src/main/java')]
+sourceSets.main.resources.srcDirs += [rootProject.file('client/src/main/resources')]
+if (javaVersion == 25) {
+    sourceSets.main.java.srcDirs += [rootProject.file('client26/src/main/java')]
+}
+def endpoint = providers.gradleProperty('rankApiUrl').getOrElse('')
+if (endpoint && (!endpoint.startsWith('https://') || new URI(endpoint).getUserInfo() != null || new URI(endpoint).getQuery() != null || new URI(endpoint).getFragment() != null)) throw new GradleException('rankApiUrl must be a credential-free HTTPS lookup URL')
+processResources {
+    inputs.property 'version', project.version
+    inputs.property 'minecraftVersion', minecraftVersion
+    inputs.property 'loaderVersion', rootProject.loader_version
+    inputs.property 'javaVersion', targetJava
+    inputs.property 'rankApiUrl', endpoint
+    filesMatching('fabric.mod.json') { expand version: project.version, minecraftVersion: minecraftVersion, loaderVersion: rootProject.loader_version, javaVersion: targetJava }
+    filesMatching('lunar-endpoint.properties') { filter { line -> "url=${endpoint}" } }
+}
+tasks.withType(JavaCompile).configureEach { options.release = targetJava; options.encoding = 'UTF-8' }
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = "lunartiers-test-${project.name}"
+        enableGameTests = false
+        enableClientGameTests = true
+        eula = true
+    }
+}
+sourceSets.gametest.java.srcDirs += [rootProject.file('gametest/src/main/java')]
+sourceSets.gametest.resources.srcDirs += [rootProject.file('gametest/src/main/resources')]
+tasks.named('runClientGameTest') {
+    if (providers.gradleProperty('clientSmoke').getOrElse('false') == 'true') jvmArgs '-Dlunar.gametest.uiOnly=true'
+}

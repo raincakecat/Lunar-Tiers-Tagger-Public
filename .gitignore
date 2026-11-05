@@ -1,0 +1,10 @@
+.gradle/
+**/build/
+**/run/
+.idea/
+*.iml
+.env
+*.sqlite*
+deployment.local.json
+api/config.local.json
+releases/

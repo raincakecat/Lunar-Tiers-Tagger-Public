@@ -1,0 +1,15 @@
+# Use a dedicated HTTPS hostname. Keep unrelated VM services unchanged.
+ranks.example.com {
+    request_body {
+        max_size 8KB
+    }
+    handle /v1/ranks/lookup {
+        reverse_proxy 127.0.0.1:8797 {
+            # Override spoofed incoming values; the app accepts one validated IP only.
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+    handle {
+        respond 404
+    }
+}

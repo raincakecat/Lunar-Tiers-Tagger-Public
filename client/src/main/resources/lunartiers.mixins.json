@@ -1,0 +1,7 @@
+{
+  "required": true,
+  "package": "dev.lunartiers.tagger.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": ["PlayerNameMixin", "TabNameMixin"],
+  "injectors": {"defaultRequire": 1}
+}

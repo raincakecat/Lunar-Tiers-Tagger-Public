@@ -1,0 +1,22 @@
+[Unit]
+Description=Lunar Tiers outbound rank tunnel
+After=network-online.target lunar-rank-ingress.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/cloudflared tunnel --no-autoupdate run --token-file %h/.config/lunar-ranks/tunnel.token
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=20
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+UMask=0077
+MemoryMax=192M
+CPUQuota=25%
+
+[Install]
+WantedBy=default.target
